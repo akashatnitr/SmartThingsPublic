@@ -360,15 +360,33 @@ def tryShipEvents(event) {
 		],
 		body: event
 	]
+	
+	def mqttPost = [
+		uri: "http://13.52.187.175:3000",
+		headers: [
+			"Content-Type": "application/json",
+			"Accept-Version": "0.0.2"
+		],
+		body: event
+	]
+
 
 	try {
 		// post the events to initial state
 		httpPostJson(eventPost) { resp ->
-			log.debug "shipped events and got ${resp.status}"
+			log.debug "akashinit shipped events and got ${resp.status}"
 			if (resp.status >= 400) {
-				log.error "shipping failed... ${resp.data}"
+				log.error "akashinit shipping failed... ${resp.data}"
 			}
 		}
+		
+		httpPostJson(mqttPost) { resp ->
+			log.debug "akashmqtt and got ${resp.status}"
+			if (resp.status >= 400) {
+				log.error "akashmqqt shipping failed... ${resp.data}"
+			}
+		}
+		
 	} catch (e) {
 		log.error "shipping events failed: $e"
 	}
